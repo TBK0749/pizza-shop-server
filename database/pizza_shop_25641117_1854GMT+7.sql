@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (301010)
-# Created: 17 November BE 2564 17:00:18 GMT+7
+# Created: 17 November BE 2564 18:54:16 GMT+7
 # Encoding: Unicode (UTF-8)
 #
 
@@ -26,16 +26,9 @@ USE `pizza_shop`;
 
 
 
+DROP TABLE IF EXISTS `ingredient_pizza`;
 DROP TABLE IF EXISTS `pizzas`;
 DROP TABLE IF EXISTS `ingredients`;
-DROP TABLE IF EXISTS `ingredient_pizza`;
-
-
-CREATE TABLE `ingredient_pizza` (
-  `pizza_id` int unsigned NOT NULL,
-  `ingredient_id` int unsigned NOT NULL,
-  PRIMARY KEY (`pizza_id`,`ingredient_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 CREATE TABLE `ingredients` (
@@ -45,7 +38,7 @@ CREATE TABLE `ingredients` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 CREATE TABLE `pizzas` (
@@ -54,21 +47,17 @@ CREATE TABLE `pizzas` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE `ingredient_pizza` (
+  `pizza_id` int unsigned NOT NULL,
+  `ingredient_id` int unsigned NOT NULL,
+  PRIMARY KEY (`pizza_id`,`ingredient_id`),
+  KEY `ingredient_id_foreign_key` (`ingredient_id`),
+  CONSTRAINT `ingredient_id_foreign_key` FOREIGN KEY (`ingredient_id`) REFERENCES `ingredients` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `pizza_id_foreign_key` FOREIGN KEY (`pizza_id`) REFERENCES `pizzas` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
-
-
-LOCK TABLES `ingredient_pizza` WRITE;
-UNLOCK TABLES;
-
-
-LOCK TABLES `ingredients` WRITE;
-UNLOCK TABLES;
-
-
-LOCK TABLES `pizzas` WRITE;
-UNLOCK TABLES;
 
 
 
@@ -86,5 +75,5 @@ SET SQL_MODE = @ORIG_SQL_MODE;
 
 
 
-# Export Finished: 17 November BE 2564 17:00:18 GMT+7
+# Export Finished: 17 November BE 2564 18:54:16 GMT+7
 
