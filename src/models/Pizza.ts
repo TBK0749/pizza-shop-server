@@ -13,6 +13,7 @@ export default class Pizza extends Model {
     @UpdatedAt
     updated_at: Date;
 
+    // Ignore
     @BelongsToMany(() => Ingredient, () => IngredientPizza)
     ingredients: Ingredient[]
 }

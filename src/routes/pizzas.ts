@@ -1,8 +1,25 @@
 import { Application, Request, Response } from "express";
+import Pizza from './../models/Pizza';
 
 export default function (app: Application) {
+    // Routes
+    // - GET /pizzas
+    // - GET /pizzas/:id
+    // - POST /pizzas
+    // - PUT /pizzas/:id
+    // - DELETE /pizzas/:id
+
+    // https://www.npmjs.com/package/sequelize-typescript
+
     app.get('/pizzas', async (req: Request, res: Response) => {
-        res.send([]);
+        const pizzas = await Pizza.findAll();
+        res.send(pizzas);
+
+        // const pizza = new Pizza({
+        //     name: 'Seafood Pizza',
+        // });
+        // pizza.save();
+        // res.send([]);
     });
 
     // Other routes

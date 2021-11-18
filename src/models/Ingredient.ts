@@ -8,7 +8,7 @@ export default class Ingredient extends Model {
     name: string;
 
     @Column
-    price: number
+    price: number;
 
     @CreatedAt
     created_at: Date;
@@ -16,6 +16,7 @@ export default class Ingredient extends Model {
     @UpdatedAt
     updated_at: Date;
 
+    // Ignore
     @BelongsToMany(() => Pizza, () => IngredientPizza)
     pizzas: Pizza[]
 }
