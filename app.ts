@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { Sequelize } from "sequelize-typescript";
 import LoadIngredientRoutes from "./src/routes/ingredients";
 import LoadPizzaRoutes from "./src/routes/pizzas";
+import { createRouting, number, query, segment, uuid } from 'ts-routes';
 
 const app = express();
 app.use(bodyParser.json());
@@ -19,8 +20,19 @@ const sequelize = new Sequelize({
 });
 
 app.get('/', async (req, res) => {
-    res.send('The server is running!');
+    res.send('The server is running! eiei');
 });
+
+// const routes = createRouting({
+//     products: segment`/products`,
+//     users: segment`/users/${number('userId')}`,
+// });
+
+// routes.products(); // '/products'
+// routes.products.pattern // '/products'
+
+// routes.users({ userId: '10' }) // '/users/10'
+// routes.users.pattern // '/users/:userId([0-9]+)
 
 LoadPizzaRoutes(app);
 LoadIngredientRoutes(app);

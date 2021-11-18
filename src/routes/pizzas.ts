@@ -14,30 +14,62 @@ export default function (app: Application) {
     app.get('/pizzas', async (req: Request, res: Response) => {
         const pizzas = await Pizza.findAll();
         res.send(pizzas);
-
-        // const pizza = new Pizza({
-        //     name: 'Seafood Pizza',
-        // });
-        // pizza.save();
-        // res.send([]);
     });
 
-    // Other routes
-    // const pizza = new Pizza({
-    //     name: 'Something nice!',
-    // });
-    // pizza.save();
+    app.post("/pizzas", async (req: Request, res: Response) => {
+        // อ่านค่าจาก request
+        const { name } = req.body;
 
-    // const ingredient = new Ingredient({
-    //     name: 'Garlic!',
-    //     price: 5,
-    // });
-    // ingredient.save();
+        // สร้าง
+        const pizza = await Pizza.create({
+            name: name
+        });
 
-    // const pizza = await Pizza.findOne({
-    //     where: {
-    //         id: 1,
-    //     },
-    //     include: [Ingredient],
-    // })
+        // ส่ง response กลับ
+        res.send(pizza);
+    });
+
+    // request url (params)
+    // request body
+    app.put("/pizzas/:id", async (req: Request, res: Response) => {
+        // อ่านค่าจาก request
+        const { name } = req.body;
+        const { id } = req.params;
+
+        // สร้าง
+        const pizza = await Pizza.update({
+            name: name,
+        }, {
+            where: { id: id }
+        });
+
+        // ส่ง response กลับ
+        res.send(pizza);
+    });
+
+    app.delete("/pizzas/:id", async (req: Request, res: Response) => {
+        // อ่านค่าจาก request
+        const { id } = req.params;
+
+        // สร้าง
+        await Pizza.destroy({
+            where: { id: id }
+        });
+
+        // ส่ง response กลับ
+        res.send([]);
+    });
+
+    app.get("/pizzas/:id", async (req: Request, res: Response) => {
+        // อ่านค่าจาก request
+        const { id } = req.params;
+
+        // สร้าง
+        const pizza = await Pizza.findOne({
+            where: { id: id }
+        });
+
+        // ส่ง response กลับ
+        res.send(pizza);
+    });
 }

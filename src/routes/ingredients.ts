@@ -1,4 +1,5 @@
 import { Application, Request, Response } from "express";
+import Ingredient from "../models/Ingredient";
 
 export default function (app: Application) {
     // Routes
@@ -9,8 +10,17 @@ export default function (app: Application) {
     // - DELETE /ingredients/:id
 
     app.get('/ingredients', async (req: Request, res: Response) => {
-        res.send([]);
+        const ingredients = await Ingredient.findAll();
+        res.send(ingredients);
+        // res.send([]);
     });
 
     // Other routes
+
+    // const ingredient = new Ingredient({
+    //     name: 'Garlic!',
+    //     price: 5,
+    // });
+    // ingredient.save();
+
 }
