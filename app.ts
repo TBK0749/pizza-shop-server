@@ -8,7 +8,8 @@ import { createRouting, number, query, segment, uuid } from 'ts-routes';
 
 const app = express();
 app.use(bodyParser.json());
-const port = 3000;
+const port = 3002;
+const cors = require('cors');
 
 const sequelize = new Sequelize({
     database: 'pizza_shop',
@@ -23,6 +24,11 @@ app.get('/', async (req, res) => {
     res.send('The server is running! eiei');
 });
 
+const corsOptions = {
+    origin: ['http://localhost:3000']
+}
+
+app.use(cors(corsOptions));
 // const routes = createRouting({
 //     products: segment`/products`,
 //     users: segment`/users/${number('userId')}`,

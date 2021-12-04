@@ -14,6 +14,7 @@ export default class Pizza extends Model {
     updated_at: Date;
 
     // Ignore
+    // books: Array<Book & {BookAuthor: BookAuthor}>;
     @BelongsToMany(() => Ingredient, () => IngredientPizza)
-    ingredients: Ingredient[]
+    ingredients: Array<Ingredient & { IngredientPizza: IngredientPizza }>
 }

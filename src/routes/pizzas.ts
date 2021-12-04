@@ -2,6 +2,8 @@ import { Application, Request, Response } from "express";
 import Pizza from './../models/Pizza';
 import { body, validationResult, param, CustomValidator } from 'express-validator';
 import { Op } from "sequelize";
+import Ingredient from "../models/Ingredient";
+import IngredientPizza from "../models/IngredientPizza";
 
 const isValidPizzaFromId: CustomValidator = async id => {
     const pizza = await Pizza.findOne({
@@ -23,9 +25,19 @@ const isPizzaDuplicateName: CustomValidator = async name => {
     }
 }
 
-const isPizzaDuplicateNameIgnoreId: CustomValidator = async (name, id) => {
+const isPizzaDuplicateNameIgnoreId: CustomValidator = async (name, obj) => {
+    const id = obj.req.params?.id;
+
     const pizza = await Pizza.findOne({
-        where: { name: name }
+        where: {
+            [Op.and]: [{
+                name: name,
+            }, {
+                id: {
+                    [Op.ne]: id,
+                }
+            }],
+        },
     });
 
     if (pizza) {
@@ -33,9 +45,16 @@ const isPizzaDuplicateNameIgnoreId: CustomValidator = async (name, id) => {
     }
 }
 
+
 export default function (app: Application) {
     app.get('/pizzas', async (req: Request, res: Response) => {
-        const pizzas = await Pizza.findAll();
+        // let include = [];
+
+        // if (req.query.ingredients === '1') {
+        //     include.push(Ingredient);
+        // }
+
+        const pizzas = await Pizza.findAll({ include: Ingredient });
         res.send(pizzas);
     });
 
@@ -83,12 +102,29 @@ export default function (app: Application) {
             }
 
             // อ่านค่าจาก request
-            const { name } = req.body;
+            const { name, ingredient_ids } = req.body;
 
+            // 1. ให้ API user ส่ง ingredient_ids มาด้วยเลย เป็น array ของ ingredient_id
+            // UI: 1. เพิ่มฟอร์มให้ user เลือก ingredient ของ pizza ได้
+            // UI: 2. เพิ่ม code ตอนส่ง request ให้ส่ง ingredient_ids ที่ user เลือก มาใน body
+
+            // 2. สร้าง route แยก รับ param เป็น pizza id และใน body ให้ส่ง ingredient_ids มา
+            // UI: 1. เพิ่มฟอร์มให้ user เลือก ingredient ของ pizza ได้
+            // UI: 2. สั่งให้ axios ส่ง request หลังจากสร้าง pizza เสร็จ (เพราะต้องใช้ pizza id ในการ add ingredient ids ในอีก route นึง)
+
+            // สร้าง route ใหม่ POST /pizzas/:id/ingredients create ingredient ของ pizza ที่กำหนด
+            // 1. หา pizza ตาม id ที่ส่งมา (ต้อง validate ว่ามีจริงด้วย)
+            // 2. สร้างคู่ pizza_id, ingredient_id ใน ingredient_pizzas table.
+
+            // const createdGroup = await Group.create({ ...req.body, groupId, creatorId: userId }); // req.body has name and users properties, users is an array of user objects.
             // สร้าง
             const pizza = await Pizza.create({
-                name: name
+                name,
             });
+
+            IngredientPizza.bulkCreate([
+                { pizza_id: pizza.id, ingredient_id: 1 }
+            ]);
 
             // ส่ง response กลับ
             res.send(pizza);
@@ -125,6 +161,8 @@ export default function (app: Application) {
                     }],
                 },
             });
+
+            // npx create-react-app pizza-shop --template typescript
 
             if (pizza) {
                 throw new Error(`You already have a pizza with ${name} name.`);

@@ -18,5 +18,5 @@ export default class Ingredient extends Model {
 
     // Ignore
     @BelongsToMany(() => Pizza, () => IngredientPizza)
-    pizzas: Pizza[]
+    pizzas: Array<Pizza & { IngredientPizza: IngredientPizza }>
 }
