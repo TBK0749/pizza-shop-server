@@ -2,6 +2,7 @@ import { Application, Request, Response } from "express";
 import Ingredient from "../models/Ingredient";
 import { body, validationResult, param, CustomValidator } from 'express-validator';
 import { Op } from "sequelize";
+import Pizza from "../models/Pizza";
 
 const isValidIngredientFromId: CustomValidator = async id => {
     const ingredient = await Ingredient.findOne({
@@ -46,7 +47,7 @@ const isIngredientDuplicateNameIgnoreId: CustomValidator = async (name, obj) => 
 export default function (app: Application) {
 
     app.get('/ingredients', async (req: Request, res: Response) => {
-        const ingredients = await Ingredient.findAll();
+        const ingredients = await Ingredient.findAll({ include: Pizza });
         res.send(ingredients);
     });
 
@@ -63,6 +64,7 @@ export default function (app: Application) {
             const { id } = req.params;
 
             const ingredient = await Ingredient.findOne({
+                include: Pizza,
                 where: { id: id }
             });
 

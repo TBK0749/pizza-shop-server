@@ -75,7 +75,12 @@ export default function (app: Application) {
             const { id } = req.params;
 
             // สร้าง
+            // const pizza = await Pizza.findOne({
+            //     where: { id: id }
+            // });
+
             const pizza = await Pizza.findOne({
+                include: Ingredient,
                 where: { id: id }
             });
 
@@ -122,9 +127,12 @@ export default function (app: Application) {
                 name,
             });
 
-            IngredientPizza.bulkCreate([
-                { pizza_id: pizza.id, ingredient_id: 1 }
-            ]);
+            IngredientPizza.bulkCreate(ingredient_ids.map((ingredientId: number) => (
+                {
+                    pizza_id: pizza.id,
+                    ingredient_id: ingredientId
+                }
+            )));
 
             // ส่ง response กลับ
             res.send(pizza);
@@ -184,15 +192,30 @@ export default function (app: Application) {
             }
 
             // อ่านค่าจาก request
-            const { name } = req.body;
+            const { name, ingredient_ids } = req.body;
             const { id } = req.params;
 
             // สร้าง
+
+            // Update pizza
             const pizza = await Pizza.update({
+                include: Ingredient,
                 name: name,
             }, {
                 where: { id: id }
             });
+
+
+            IngredientPizza.destroy({
+                where: { pizza_id: id }
+            }).then(() =>
+                IngredientPizza.bulkCreate(ingredient_ids.map((ingredientId: number) => (
+                    {
+                        pizza_id: id,
+                        ingredient_id: ingredientId
+                    }
+                )))
+            );
 
             // ส่ง response กลับ
             res.send(pizza);
